@@ -39,7 +39,22 @@ _**Проверка прогонов**_
 
 #### Шаг 2: Конвенции репозитория
 
-Сформулированы
+1. _Доменные исключения сами знают свой HTTP-статус и код ошибки_  
+  `DomainException` — абстрактный класс с `abstract int StatusCode` и `abstract string Code`, каждый наследник захардкоживает оба значения одинаково во всех трёх контекстах. Нюанс: `Domain` не может ссылаться на `Shared`, поэтому строки типа "NOT_FOUND" не берутся из Shared/Errors/ErrorCodes.cs, а дублируются вручную — синхронизация не защищена компилятором.
+2. _Свой `ExceptionHandlingMiddleware`, а не `UseExceptionHandler`_  
+   Каждый `*.Api` регистрирует собственный `ExceptionHandlingMiddleware`, который ловит `DomainException`, то есть пишет `ErrorResponse.Create`(ex.Code, ex.Message) с ex.StatusCode, а всё остальное → 500 INTERNAL_ERROR.
+3. _Приватные сеттеры + приватный пустой конструктор для EF у всех сущностей_
+   Все сущности (Video, User, Comment, Like...) имеют `private set` на всех свойствах, публичный конструктор для создания и отдельный `private` пустой конструктор только для материализации EF Core. Мутация — только через именованные методы состояния (Approve(), Reject(), StartProcessing(), MarkNotified()).
+4. _Ручной маппинг через `*MappingExtensions`_  
+   Каждый `Application`-проект держит статический класс расширений (`ContentMappingExtensions`, `UserMappingExtensions`, `CommentMappingExtensions`, `ExportMappingExtensions`) для маппинга Entity. AutoMapper в зависимостях не используется.
+5. _Единый паттерн `DependencyInjection.cs`_  
+   Каждый слой, требующий регистрации в DI, содержит файл ровно с именем `DependencyInjection.cs` и одним extension-методом (`AddApplicationServices()`, `AddInfrastructure()`), и все 6 файлов (по 2 на контекст × 3 контекста) снабжены одинаковым `SuppressMessage("Naming", "CA1724", Justification = "Extension methods class for service registration.")`, потому что имя класса совпадает с именем namespace.
+6. _`Repository` + отдельный `IUnitOfWork`_  
+   Сервисы не сохраняют изменения через репозиторий напрямую, репозиторий только readonly-запросы/трекинг, а фиксация просиходит через явный отдельный вызов `_unitOfWork.SaveChangesAsync()`.
+7. _`ICurrentUserService` объявлен в `Application`, но реализован в `Api`, а не в `Infrastructure`_  
+   Реализации нужен `IHttpContextAccessor`, которого в `Infrastructure` по архитектуре быть не должно.
+8. _Пагинация не унифицирована между контекстами — это ловушка, а не конвенция_  
+   `Identity` использует постраничную `PagedResult<T>` (Page/PageSize/TotalCount), а `Engagement` (лента, поиск) — курсорную (`FeedResponse(Videos, NextCursor)`, строка-курсор). Если агент по аналогии перетащит `PagedResult<T>` в фичу ленты, получится несоответствие сложившемуся в Engagement стилю.
 
 #### Шаг 3: AGENTS.md и skill
 
