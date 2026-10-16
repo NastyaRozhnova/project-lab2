@@ -137,3 +137,13 @@ Issue и комментарии прочитаны командой `gh issue vi
 Реализация закоммичена локально: `8aebd2c` (`fix: enforce video access when reading comments`). Попытка `git -c credential.helper= -c 'credential.helper=!gh auth git-credential' push -u origin fix/issue-1-comment-access` через настроенный GH_TOKEN завершилась HTTP 403: `Permission to NastyaRozhnova/project-lab2.git denied to NastyaRozhnova`. Следовательно, чтение Issue подтверждено, но возможность записи ветки этим токеном не подтверждена и фактически отклонена. Необходима проверка доступа PAT к репозиторию и разрешения Contents: Read and write; для следующего шага также требуется Pull requests: Read and write. Точную причину ограничения GitHub в ответе не уточнил.
 
 Ветка не опубликована, PR не открыт, merge не выполнялся. Описание PR с `Closes #1` подготовлено, но создание PR зависит от успешной отправки ветки. Другое подключение или токен для обхода отказа не использовались.
+
+### Повторная публикация после обновления прав PAT
+
+16.10.2026 пользователь сообщил об обновлении прав существующего PAT. Проверка `git remote -v` подтвердила: fetch и push для `origin` указывают на `https://github.com/NastyaRozhnova/project-lab2.git`. Рабочее дерево перед повторной попыткой было чистым, активная ветка — `fix/issue-1-comment-access`.
+
+Повторная команда `git -c credential.helper= -c 'credential.helper=!gh auth git-credential' push -u origin fix/issue-1-comment-access` завершилась успешно (exit code 0): удалённая ветка создана, tracking настроен. Использован тот же источник учётных данных GH_TOKEN; значение токена не выводилось, другие учётные данные не подключались. Таким образом, запись ветки после обновления разрешений фактически подтверждена. Первоначальный отказ HTTP 403 и его описание выше сохранены как история первой попытки.
+
+Командой `gh pr create --repo NastyaRozhnova/project-lab2 --base main --head fix/issue-1-comment-access` с подготовленным описанием создан [PR #2](https://github.com/NastyaRozhnova/project-lab2/pull/2). В описании присутствует `Closes #1`. Создание PR также подтверждает достаточные права для этой операции; полный набор разрешений PAT из этого не выводится. Merge не выполнялся.
+
+В этой повторной попытке код и тесты не изменялись, restore/build/test не запускались заново; приведённые выше результаты относятся к выполненной проверке реализации. Дополнение отчёта проверено через `git diff --check`.
