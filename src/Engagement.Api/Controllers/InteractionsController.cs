@@ -42,6 +42,8 @@ public class InteractionsController : ControllerBase
 
     [HttpGet("comments")]
     [ProducesResponseType(typeof(IReadOnlyList<CommentResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Comments(Guid id, CancellationToken cancellationToken)
     {
         IReadOnlyList<CommentResponse> comments = await _interactions.GetCommentsAsync(id, cancellationToken);

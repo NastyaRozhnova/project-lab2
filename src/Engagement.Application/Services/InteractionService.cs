@@ -71,6 +71,8 @@ public class InteractionService : IInteractionService
 
     public async Task<IReadOnlyList<CommentResponse>> GetCommentsAsync(Guid videoId, CancellationToken cancellationToken = default)
     {
+        await EnsureInteractableAsync(videoId, _currentUser.UserId, cancellationToken);
+
         IReadOnlyList<Comment> comments = await _comments.GetByVideoAsync(videoId, cancellationToken);
         var replyCounts = comments
             .Where(comment => comment.ParentCommentId.HasValue)
