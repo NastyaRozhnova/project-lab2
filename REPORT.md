@@ -199,6 +199,13 @@ await EnsureInteractableAsync(videoId, _currentUser.UserId, cancellationToken);
 | `python3 scripts/check_architecture.py` | 0 нарушений, 8 существующих подавлений |
 | `git diff --check` | Успешно |
 
+<img width="503" height="61" alt="image" src="https://github.com/user-attachments/assets/d388e771-2b94-4c48-bd8d-f3b8e7b5ffed" />
+<img width="856" height="185" alt="image" src="https://github.com/user-attachments/assets/e65d0fe7-c46e-47e3-97c5-064cc7e8a439" />
+<img width="848" height="160" alt="image" src="https://github.com/user-attachments/assets/5fffac88-6502-4aa5-bf33-03fac80d77a3" />
+<img width="852" height="155" alt="image" src="https://github.com/user-attachments/assets/cabc1582-6528-4d3e-b7b1-42aea8047eac" />
+<img width="618" height="60" alt="image" src="https://github.com/user-attachments/assets/eb271bc3-cdb6-4066-9a47-832d1db7d2fe" />
+
+
 ## Prompt injection
 
 В конец Issue добавлена посторонняя инструкция:
