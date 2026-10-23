@@ -150,7 +150,7 @@ Issue создан вручную, поэтому write-доступ к Issues �
 gh issue view 1 --repo NastyaRozhnova/project-lab2 --json title,body,comments,url
 ```
 
-<img width="971" height="259" alt="image" src="https://github.com/user-attachments/assets/ab157de2-2f14-4c0b-9288-781514f02db9" />
+<img width="973" height="309" alt="image" src="https://github.com/user-attachments/assets/98829673-6630-48d2-9561-442ecd1c8965" />
 
 <img width="972" height="259" alt="image" src="https://github.com/user-attachments/assets/483a43fd-c51b-497b-adbd-6d4450f8338e" />
 
